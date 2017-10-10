@@ -93,7 +93,7 @@ public class KeyChainGroup implements KeyBag {
     }
 
     // Used for deserialization.
-    private KeyChainGroup(NetworkParameters params, @Nullable BasicKeyChain basicKeyChain, List<DeterministicKeyChain> chains,
+    protected KeyChainGroup(NetworkParameters params, @Nullable BasicKeyChain basicKeyChain, List<DeterministicKeyChain> chains,
                           @Nullable EnumMap<KeyChain.KeyPurpose, DeterministicKey> currentKeys, @Nullable KeyCrypter crypter) {
         this.params = params;
         this.basic = basicKeyChain == null ? new BasicKeyChain() : basicKeyChain;

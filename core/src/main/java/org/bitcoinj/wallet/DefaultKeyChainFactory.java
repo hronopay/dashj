@@ -25,8 +25,11 @@ public class DefaultKeyChainFactory implements KeyChainFactory {
     @Override
     public DeterministicKeyChain makeKeyChain(Protos.Key key, Protos.Key firstSubKey, DeterministicSeed seed, KeyCrypter crypter, boolean isMarried) {
         DeterministicKeyChain chain;
+
         if (isMarried)
             chain = new MarriedKeyChain(seed, crypter);
+        else if(firstSubKey.getDeterministicKey().getPathList().get(0) == 0x8000002C)
+            chain = new DeterministicKeyChain44(seed, crypter);
         else
             chain = new DeterministicKeyChain(seed, crypter);
         return chain;
@@ -35,12 +38,14 @@ public class DefaultKeyChainFactory implements KeyChainFactory {
     @Override
     public DeterministicKeyChain makeWatchingKeyChain(Protos.Key key, Protos.Key firstSubKey, DeterministicKey accountKey,
                                                       boolean isFollowingKey, boolean isMarried) throws UnreadableWalletException {
-        if (!accountKey.getPath().equals(DeterministicKeyChain.ACCOUNT_ZERO_PATH))
+        if (!accountKey.getPath().equals(DeterministicKeyChain.ACCOUNT_ZERO_PATH) || !accountKey.getPath().equals(DeterministicKeyChain.BIP44_ACCOUNT_ZERO_PATH))
             throw new UnreadableWalletException("Expecting account key but found key with path: " +
                     HDUtils.formatPath(accountKey.getPath()));
         DeterministicKeyChain chain;
         if (isMarried)
             chain = new MarriedKeyChain(accountKey);
+        else if(firstSubKey.getDeterministicKey().getPathList().get(0) == 0x8000002C)
+            chain = new DeterministicKeyChain44(accountKey, isFollowingKey);
         else
             chain = new DeterministicKeyChain(accountKey, isFollowingKey);
         return chain;
