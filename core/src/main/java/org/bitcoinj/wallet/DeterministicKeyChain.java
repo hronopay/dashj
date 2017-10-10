@@ -116,9 +116,9 @@ public class DeterministicKeyChain implements EncryptableKeyChain {
     public static final ImmutableList<ChildNumber> INTERNAL_SUBPATH = ImmutableList.of(ChildNumber.ONE);
     public static final ImmutableList<ChildNumber> EXTERNAL_PATH = HDUtils.concat(ACCOUNT_ZERO_PATH, EXTERNAL_SUBPATH);
     public static final ImmutableList<ChildNumber> INTERNAL_PATH = HDUtils.concat(ACCOUNT_ZERO_PATH, INTERNAL_SUBPATH);
-    // m / 44' / 0' / 0'
+    // m / 44' / 5' / 0' - Dash is coin type 5 - https://github.com/satoshilabs/slips/blob/master/slip-0044.md
     public static final ImmutableList<ChildNumber> BIP44_ACCOUNT_ZERO_PATH =
-            ImmutableList.of(new ChildNumber(44, true), ChildNumber.ZERO_HARDENED, ChildNumber.ZERO_HARDENED);
+            ImmutableList.of(new ChildNumber(44, true), ChildNumber.FIVE_HARDENED, ChildNumber.ZERO_HARDENED);
 
     // We try to ensure we have at least this many keys ready and waiting to be handed out via getKey().
     // See docs for getLookaheadSize() for more info on what this is for. The -1 value means it hasn't been calculated
@@ -731,6 +731,8 @@ public class DeterministicKeyChain implements EncryptableKeyChain {
         if (seed != null) {
             Protos.Key.Builder mnemonicEntry = BasicKeyChain.serializeEncryptableItem(seed);
             mnemonicEntry.setType(Protos.Key.Type.DETERMINISTIC_MNEMONIC);
+            //if(getAccountPath().equals(BIP44_ACCOUNT_ZERO_PATH))
+            //    mnemonicEntry.setDeterministicKeyType(Protos.Key.DeterministicKeyType.BIP44);
             serializeSeedEncryptableItem(seed, mnemonicEntry);
             entries.add(mnemonicEntry.build());
         }

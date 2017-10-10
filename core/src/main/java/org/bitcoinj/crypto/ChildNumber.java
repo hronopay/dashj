@@ -39,6 +39,13 @@ public class ChildNumber implements Comparable<ChildNumber> {
     public static final ChildNumber ONE = new ChildNumber(1);
     public static final ChildNumber ZERO_HARDENED = new ChildNumber(0, true);
 
+    /**
+     * Dash is Coin Type 5
+     * https://github.com/satoshilabs/slips/blob/master/slip-0044.md
+     */
+    public static final ChildNumber FIVE_HARDENED = new ChildNumber(5, true);
+    public static final ChildNumber FIVE = new ChildNumber(5);
+
     /** Integer i as per BIP 32 spec, including the MSB denoting derivation type (0 = public, 1 = private) **/
     private final int i;
 
