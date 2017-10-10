@@ -280,7 +280,7 @@ public class Wallet extends BaseTaggableObject
         this(Context.getOrCreate(params), keyChainGroup);
     }
 
-    private Wallet(Context context, KeyChainGroup keyChainGroup) {
+    protected Wallet(Context context, KeyChainGroup keyChainGroup) {
         this.context = context;
         this.params = context.getParams();
         this.keyChainGroup = checkNotNull(keyChainGroup);
@@ -5340,4 +5340,23 @@ public class Wallet extends BaseTaggableObject
         }
     }
     //endregion
+
+    //BIP44 support
+    public void addDualKeyChainSupport()
+    {
+        try {
+            keyChainGroupLock.lock();
+            boolean hasBIP44 = false;
+            for(DeterministicKeyChain chain : keyChainGroup.getDeterministicKeyChains())
+            {
+                if(chain.getAccountPath().equals(DeterministicKeyChain.BIP44_ACCOUNT_ZERO_PATH))
+                    hasBIP44 = true;
+            }
+            if(!hasBIP44)
+                keyChainGroup.addAndActivateHDChain(new DeterministicKeyChain44(getKeyChainSeed()));
+        }
+        finally {
+            keyChainGroupLock.unlock();
+        }
+    }
 }
